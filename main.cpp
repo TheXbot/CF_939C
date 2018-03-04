@@ -12,21 +12,32 @@ int main() {
     int s;
     int f;
     cin >> s >> f;
+
     int timeWindow = f - s;
+	int currCount = 0;
     int bestCount = 0;
     int bestTimeZone = 1;
-    int currCount;
-    for (int i = 0; i < hours; i++) {
-        currCount = 0;
-        for (int j = 0; j < timeWindow; j++) {
-            if ((i + j) < (hours)) currCount += timeZones[i + j];
-                else currCount += timeZones[(i + j) - hours];
-        }
+	int firstPointer = 0;
+	int lastPointer = timeWindow;
+
+	for (int i = 0; i < timeWindow; i++) {
+		currCount += timeZones[i];
+		bestCount = currCount;
+		bestTimeZone = 1;
+	}
+
+	for (; firstPointer < hours;) {
+		if (lastPointer >= hours) lastPointer = 0;
+        currCount -= timeZones[firstPointer];
+        currCount += timeZones[lastPointer];
         if (currCount > bestCount) {
             bestCount = currCount;
-            bestTimeZone = i + 1;
+            bestTimeZone = firstPointer + 2;
         }
-    }
+        firstPointer++;
+        lastPointer++;
+	}
+
     int shift  = 1 + s - bestTimeZone;
     if (shift > 0) cout << shift;
         else cout << hours + shift;
