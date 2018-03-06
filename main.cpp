@@ -5,40 +5,38 @@ using namespace std;
 int main() {
     int hours;
     cin >> hours;
-    int *timeZones = new int[hours];
+    int inp;
+//    int *timeZones = new int[hours];
+    int timeZones[hours];
     for (int i = 0; i < hours; i++) {
-        cin >> timeZones[i];
+        cin >> inp;
+        timeZones[i] = (i == 0 ? inp : timeZones[i - 1] + inp);
     }
     int s;
     int f;
     cin >> s >> f;
 
-    int timeWindow = f - s;
-	int currCount = 0;
-    int bestCount = 0;
+    int k = f - s - 1;          //time window
     int bestTimeZone = 1;
-	int firstPointer = 0;
-	int lastPointer = timeWindow;
+    int nonWorking;
+    int maxWorking = timeZones[hours - 1];
+    int minNonWorking = timeZones[hours - 1] + 1;
 
-	for (int i = 0; i < timeWindow; i++) {
-		currCount += timeZones[i];
-		bestCount = currCount;
-		bestTimeZone = 1;
-	}
+    for (int i = 0; i < hours; i++) {
+        if (i < k) nonWorking = maxWorking - timeZones[k] + (i == 0 ? 0 : timeZones[i - 1]);
+            else nonWorking = timeZones[i - 1] - timeZones[k];
 
-	for (; firstPointer < hours;) {
-		if (lastPointer >= hours) lastPointer = 0;
-        currCount -= timeZones[firstPointer];
-        currCount += timeZones[lastPointer];
-        if (currCount > bestCount) {
-            bestCount = currCount;
-            bestTimeZone = firstPointer + 2;
+        if (nonWorking < minNonWorking) {
+            minNonWorking = nonWorking;
+            bestTimeZone = i;
         }
-        firstPointer++;
-        lastPointer++;
-	}
+        k++;
+        if (k >= hours) {
+            k -= hours;
+        }
+    }
 
-    int shift  = 1 + s - bestTimeZone;
+    int shift  = s - bestTimeZone;
     if (shift > 0) cout << shift;
         else cout << hours + shift;
     return 0;
