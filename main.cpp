@@ -1,13 +1,14 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
 int main() {
-    int hours;
+    long long int hours;
     cin >> hours;
-    int inp;
+    long long int inp;
 //    int *timeZones = new int[hours];
-    int timeZones[hours];
+    long long int timeZones[hours];
     for (int i = 0; i < hours; i++) {
         cin >> inp;
         timeZones[i] = (i == 0 ? inp : timeZones[i - 1] + inp);
@@ -17,18 +18,22 @@ int main() {
     cin >> s >> f;
 
     int k = f - s - 1;          //time window
-    int bestTimeZone = 1;
-    int nonWorking;
-    int maxWorking = timeZones[hours - 1];
-    int minNonWorking = timeZones[hours - 1] + 1;
+    long long int nonWorking;
+    long long int maxWorking = timeZones[hours - 1];
+    long long int minNonWorking = timeZones[hours - 1] + 1;
+    vector<long long int> bestTimeZones = {1};
 
     for (int i = 0; i < hours; i++) {
-        if (i < k) nonWorking = maxWorking - timeZones[k] + (i == 0 ? 0 : timeZones[i - 1]);
+        if (i <= k) nonWorking = maxWorking - timeZones[k] + (i == 0 ? 0 : timeZones[i - 1]);
             else nonWorking = timeZones[i - 1] - timeZones[k];
 
+        if (nonWorking == minNonWorking) {
+            bestTimeZones.push_back(i);
+        }
         if (nonWorking < minNonWorking) {
             minNonWorking = nonWorking;
-            bestTimeZone = i;
+            bestTimeZones.clear();
+            bestTimeZones.push_back(i);
         }
         k++;
         if (k >= hours) {
@@ -36,8 +41,16 @@ int main() {
         }
     }
 
-    int shift  = s - bestTimeZone;
-    if (shift > 0) cout << shift;
-        else cout << hours + shift;
+    int minTime = hours;
+    int shift;
+    int curTime;
+    for(size_t i = 0; i <bestTimeZones.size(); i++) {
+        shift  = s - bestTimeZones[i];
+        curTime = (shift > 0 ? shift : hours + shift);
+        if (minTime > curTime) {
+            minTime = curTime;
+        }
+    }
+    cout << minTime;
     return 0;
 }
